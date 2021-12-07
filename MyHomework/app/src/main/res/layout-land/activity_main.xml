@@ -7,11 +7,14 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_width="368dp"
+        android:layout_height="118dp"
         android:orientation="vertical"
         android:weightSum="6"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout2"
+        app:layout_constraintTop_toTopOf="parent">
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -30,7 +33,6 @@
                     android:layout_weight="1"
                     android:text=""
                     android:textColor="@color/black"
-                    android:autoSizeTextType="uniform"
                     android:textStyle="bold" />
 
                 <Button
@@ -41,7 +43,6 @@
                     android:layout_weight="1"
                     android:text=""
                     android:textColor="@color/black"
-                    android:autoSizeTextType="uniform"
                     android:textStyle="bold" />
 
                 <Button
@@ -52,7 +53,6 @@
                     android:layout_weight="1"
                     android:text=""
                     android:textColor="@color/black"
-                    android:autoSizeTextType="uniform"
                     android:textStyle="bold" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -60,11 +60,15 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_width="363dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="370dp"
         android:orientation="vertical"
         android:weightSum="6"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -91,10 +95,9 @@
                     android:id="@+id/ibtn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:layout_marginHorizontal="10dp"
-                    android:src="@drawable/ic_baseline_backspace_24"
-                    />
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_baseline_backspace_24" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -303,7 +306,7 @@
             android:layout_weight="1"
             android:backgroundTint="@android:color/holo_green_light"
             android:text="Call"
-            android:textSize="35sp"
+            android:autoSizeTextType="uniform"
             android:textStyle="bold" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
