@@ -155,6 +155,13 @@ public class MainActivity extends AppCompatActivity {
                 tv.setText(newString);
             }
         });
+        back.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                tv.setText("");
+                return true;
+            }
+        });
         bcall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
