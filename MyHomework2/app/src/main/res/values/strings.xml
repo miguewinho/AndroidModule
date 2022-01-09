@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">NextWeather</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="aveiro">Aveiro</string>
+    <string name="porto">Porto</string>
+    <string name="lisboa">Lisboa</string>
+    <string name="coimbra">Coimbra</string>
+    <string name="date">00/00/2022</string>
+    <string name="temp">10º C / 20º C</string>
+    <string name="precip">14%</string>
+    <string name="data_text">Data</string>
+    <string name="TempText">Temperatura</string>
+    <string name="precipText">Precipitação</string>
+    <string name="textview">TextView</string>
+</resources>
