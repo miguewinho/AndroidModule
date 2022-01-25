@@ -6,10 +6,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.TextView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,8 +23,6 @@ import pt.ua.nextweather.network.IpmaWeatherClient;
 import pt.ua.nextweather.network.WeatherTypesResultsObserver;
 
 public class result extends AppCompatActivity {
-
-    List<Weather>  days = new ArrayList<>();
 
     RecyclerView recyclerView;
 
@@ -44,12 +40,18 @@ public class result extends AppCompatActivity {
         String city = intent.getStringExtra(MainActivity.CITY_TEXT);
 
         TextView cityName = findViewById(R.id.city);
-        String tmp = "Meteorologia de " + city;
+        String tmp = "Zona de " + city;
         cityName.setText(tmp);
 
-        callWeatherForecastForACityStep1(city);
-
         recyclerView = findViewById(R.id.recyclerView);
+
+        List<Weather> emptyList = new ArrayList<>();
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getParent()));
+        myAdapter = new MyAdapter(getParent(), emptyList);
+        recyclerView.setAdapter(myAdapter);
+
+        callWeatherForecastForACityStep1(city);
 
     }
 
@@ -63,7 +65,7 @@ public class result extends AppCompatActivity {
             }
             @Override
             public void onFailure(Throwable cause) {
-
+                Log.i("city error", "No City named "+city);
             }
         });
 
@@ -84,6 +86,7 @@ public class result extends AppCompatActivity {
 
             @Override
             public void onFailure(Throwable cause) {
+                Log.i("city error", "No City named "+city);
             }
         });
     }
@@ -92,13 +95,13 @@ public class result extends AppCompatActivity {
         client.retrieveForecastForCity(localId, new ForecastForACityResultsObserver() {
             @Override
             public void receiveForecastList(List<Weather> forecast) {
-                days.addAll(forecast);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getParent()));
-                myAdapter = new MyAdapter(getParent(), days);
+                myAdapter = new MyAdapter(getParent(), forecast);
                 recyclerView.setAdapter(myAdapter);
             }
             @Override
             public void onFailure(Throwable cause) {
+                Log.i("invalid ID", "ID "+ localId + " is invalid");
             }
         });
 

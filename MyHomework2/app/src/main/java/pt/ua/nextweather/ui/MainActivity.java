@@ -1,22 +1,29 @@
 package pt.ua.nextweather.ui;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import pt.ua.nextweather.R;
 import pt.ua.nextweather.datamodel.City;
@@ -31,13 +38,12 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String CITY_TEXT = "pt.ua.nextweather.ui.CITY_TEXT";
 
-    private TextView feedback;
+    RecyclerView recyclerView;
 
-    private Button porto, lisboa, coimbra, aveiro;
+    MyAdapter myAdapter;
 
     IpmaWeatherClient client = new IpmaWeatherClient();
     private HashMap<String, City> cities;
-    private HashMap<Integer, WeatherType> weatherDescriptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,45 +53,44 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        porto = findViewById(R.id.porto);
-        porto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openActivity("Porto");
-            }
-        });
+        Button porto = findViewById(R.id.porto);
+        porto.setOnClickListener(view -> openActivity("Porto"));
 
-        lisboa = findViewById(R.id.lisboa);
-        lisboa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openActivity("Lisboa");
-            }
-        });
+        Button lisboa = findViewById(R.id.lisboa);
+        lisboa.setOnClickListener(view -> openActivity("Lisboa"));
 
-        aveiro = findViewById(R.id.aveiro);
-        aveiro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openActivity("Aveiro");
-            }
-        });
+        Button aveiro = findViewById(R.id.aveiro);
+        aveiro.setOnClickListener(view -> openActivity("Aveiro"));
 
-        coimbra = findViewById(R.id.coimbra);
-        coimbra.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openActivity("Coimbra");
-            }
-        });
+        Button coimbra = findViewById(R.id.coimbra);
+        coimbra.setOnClickListener(view -> openActivity("Coimbra"));
 
-        //feedback = findViewById(R.id.tvFeedback);
+        Button braga = findViewById(R.id.braga);
+        braga.setOnClickListener(view -> openActivity("Braga"));
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            List<Weather> emptyList = new ArrayList<>();
+
+            recyclerView = findViewById(R.id.recyclerView);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getParent()));
+            myAdapter = new MyAdapter(getParent(), emptyList);
+            recyclerView.setAdapter(myAdapter);
+        }
+
     }
 
     public void openActivity(String cidade){
-        Intent intent = new Intent(this, result.class);
-        intent.putExtra(CITY_TEXT, cidade);
-        startActivity(intent);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            TextView cityName = findViewById(R.id.city);
+            String tmp = "Zona de " + cidade;
+            cityName.setText(tmp);
+
+            callWeatherForecastForACityStep1(cidade);
+        }else{
+            Intent intent = new Intent(this, result.class);
+            intent.putExtra(CITY_TEXT, cidade);
+            startActivity(intent);
+        }
     }
 
 
@@ -111,21 +116,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     private void callWeatherForecastForACityStep1(String city) {
-
-        feedback.append("\nGetting forecast for: " + city); feedback.append("\n");
 
         // call the remote api, passing an (anonymous) listener to get back the results
         client.retrieveWeatherConditionsDescriptions(new WeatherTypesResultsObserver() {
             @Override
             public void receiveWeatherTypesList(HashMap<Integer, WeatherType> descriptorsCollection) {
-                MainActivity.this.weatherDescriptions = descriptorsCollection;
                 callWeatherForecastForACityStep2( city);
             }
             @Override
             public void onFailure(Throwable cause) {
-                feedback.append("Failed to get weather conditions!");
+                Log.i("city error", "No City named "+city);
             }
         });
 
@@ -141,14 +142,12 @@ public class MainActivity extends AppCompatActivity {
                 if( null != cityFound) {
                     int locationId = cityFound.getGlobalIdLocal();
                     callWeatherForecastForACityStep3(locationId);
-                } else {
-                    feedback.append("unknown city: " + city);
                 }
             }
 
             @Override
             public void onFailure(Throwable cause) {
-                feedback.append("Failed to get cities list!");
+                Log.i("city error", "No City named "+city);
             }
         });
     }
@@ -157,17 +156,15 @@ public class MainActivity extends AppCompatActivity {
         client.retrieveForecastForCity(localId, new ForecastForACityResultsObserver() {
             @Override
             public void receiveForecastList(List<Weather> forecast) {
-                for (Weather day : forecast) {
-                    feedback.append("Day "+ day.getForecastDate() + " - Minimum Temperature: "+day.getTMin()+" - Maximum Temperature: "+day.getTMax());
-                    feedback.append("\n");
-                }
+                recyclerView.setLayoutManager(new LinearLayoutManager(getParent()));
+                myAdapter = new MyAdapter(getParent(), forecast);
+                recyclerView.setAdapter(myAdapter);
             }
             @Override
             public void onFailure(Throwable cause) {
-                feedback.append( "Failed to get forecast for 5 days");
+                Log.i("invalid ID", "ID "+ localId + " is invalid");
             }
         });
 
     }
-
 }

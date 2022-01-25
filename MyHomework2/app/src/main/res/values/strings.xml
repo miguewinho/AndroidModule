@@ -19,5 +19,5 @@
     <string name="data_text">Data</string>
     <string name="TempText">Temperatura</string>
     <string name="precipText">Precipitação</string>
-    <string name="textview">TextView</string>
+    <string name="algarve">Braga</string>
 </resources>
